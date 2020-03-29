@@ -248,6 +248,7 @@ public abstract class AbstractAutoProxyCreator extends ProxyProcessorSupport
 			if (this.advisedBeans.containsKey(cacheKey)) {
 				return null;
 			}
+			// 判断是否需要添加到【advisedBeans】集合中
 			if (isInfrastructureClass(beanClass) || shouldSkip(beanClass, beanName)) {
 				this.advisedBeans.put(cacheKey, Boolean.FALSE);
 				return null;
@@ -335,18 +336,22 @@ public abstract class AbstractAutoProxyCreator extends ProxyProcessorSupport
 		if (StringUtils.hasLength(beanName) && this.targetSourcedBeans.contains(beanName)) {
 			return bean;
 		}
+		// 判断是否已经进行增强处理了
 		if (Boolean.FALSE.equals(this.advisedBeans.get(cacheKey))) {
 			return bean;
 		}
+		// 判断是否是切面，和之前的判断一样
 		if (isInfrastructureClass(bean.getClass()) || shouldSkip(bean.getClass(), beanName)) {
 			this.advisedBeans.put(cacheKey, Boolean.FALSE);
 			return bean;
 		}
 
 		// Create proxy if we have advice.
+		// 获取当前 bean 的所有增强器（通知方法）
 		Object[] specificInterceptors = getAdvicesAndAdvisorsForBean(bean.getClass(), beanName, null);
 		if (specificInterceptors != DO_NOT_PROXY) {
 			this.advisedBeans.put(cacheKey, Boolean.TRUE);
+			// 创建 bean 的代理对象
 			Object proxy = createProxy(
 					bean.getClass(), beanName, specificInterceptors, new SingletonTargetSource(bean));
 			this.proxyTypes.put(cacheKey, proxy.getClass());
@@ -370,6 +375,7 @@ public abstract class AbstractAutoProxyCreator extends ProxyProcessorSupport
 	 * @see #shouldSkip
 	 */
 	protected boolean isInfrastructureClass(Class<?> beanClass) {
+		// 判断是否是【Advice】、【Pointcut】、【Advisor】、【AopInfrastructureBean】类型
 		boolean retVal = Advice.class.isAssignableFrom(beanClass) ||
 				Pointcut.class.isAssignableFrom(beanClass) ||
 				Advisor.class.isAssignableFrom(beanClass) ||
@@ -457,7 +463,7 @@ public abstract class AbstractAutoProxyCreator extends ProxyProcessorSupport
 				evaluateProxyInterfaces(beanClass, proxyFactory);
 			}
 		}
-
+		// 获取 bean 的所有增强器
 		Advisor[] advisors = buildAdvisors(beanName, specificInterceptors);
 		proxyFactory.addAdvisors(advisors);
 		proxyFactory.setTargetSource(targetSource);
@@ -467,7 +473,7 @@ public abstract class AbstractAutoProxyCreator extends ProxyProcessorSupport
 		if (advisorsPreFiltered()) {
 			proxyFactory.setPreFiltered(true);
 		}
-
+		// 使用代理工厂创建对象
 		return proxyFactory.getProxy(getProxyClassLoader());
 	}
 

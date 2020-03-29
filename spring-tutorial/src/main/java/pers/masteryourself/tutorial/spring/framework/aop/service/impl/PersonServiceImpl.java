@@ -15,7 +15,11 @@ import pers.masteryourself.tutorial.spring.framework.aop.service.PersonService;
 @Service
 public class PersonServiceImpl implements PersonService {
 
-    @Override
+	public PersonServiceImpl() {
+		System.out.println("PersonServiceImpl constructor");
+	}
+
+	@Override
     public String query(String name) {
         return String.format("result is %s query finish", name);
     }

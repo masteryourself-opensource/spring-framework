@@ -120,6 +120,7 @@ public abstract class AopConfigUtils {
 
 		Assert.notNull(registry, "BeanDefinitionRegistry must not be null");
 
+		// 判断容器中是否已经导入
 		if (registry.containsBeanDefinition(AUTO_PROXY_CREATOR_BEAN_NAME)) {
 			BeanDefinition apcDefinition = registry.getBeanDefinition(AUTO_PROXY_CREATOR_BEAN_NAME);
 			if (!cls.getName().equals(apcDefinition.getBeanClassName())) {
@@ -131,7 +132,8 @@ public abstract class AopConfigUtils {
 			}
 			return null;
 		}
-
+		// 给容器中注入一个组件，bean name 是 AUTO_PROXY_CREATOR_BEAN_NAME
+		// bean 类型是【AnnotationAwareAspectJAutoProxyCreator】
 		RootBeanDefinition beanDefinition = new RootBeanDefinition(cls);
 		beanDefinition.setSource(source);
 		beanDefinition.getPropertyValues().add("order", Ordered.HIGHEST_PRECEDENCE);
