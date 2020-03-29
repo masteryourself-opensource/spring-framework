@@ -24,7 +24,7 @@ public class UserService {
     public void insert(String name) {
         userDao.insert(name);
         System.out.println("插入完成");
-        /*int i = 10 / 0;*/
+        int i = 10 / 0;
     }
 
 }
