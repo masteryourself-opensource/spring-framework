@@ -79,11 +79,17 @@ public class DefaultAdvisorAdapterRegistry implements AdvisorAdapterRegistry, Se
 	public MethodInterceptor[] getInterceptors(Advisor advisor) throws UnknownAdviceTypeException {
 		List<MethodInterceptor> interceptors = new ArrayList<>(3);
 		Advice advice = advisor.getAdvice();
+		// 如果是【MethodInterceptor】，直接加入到集合中
 		if (advice instanceof MethodInterceptor) {
 			interceptors.add((MethodInterceptor) advice);
 		}
+		// 循环所有的适配器，看看哪一种能够转换 advice
+		// 0 = {MethodBeforeAdviceAdapter@1895}
+		// 1 = {AfterReturningAdviceAdapter@1902}
+		// 2 = {ThrowsAdviceAdapter@1909}
 		for (AdvisorAdapter adapter : this.adapters) {
 			if (adapter.supportsAdvice(advice)) {
+				// 如果不是【MethodInterceptor】，使用【AdvisorAdapter】将增强器转为【MethodInterceptor】
 				interceptors.add(adapter.getInterceptor(advisor));
 			}
 		}
