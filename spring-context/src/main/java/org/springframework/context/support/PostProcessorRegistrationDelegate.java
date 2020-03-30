@@ -236,25 +236,36 @@ final class PostProcessorRegistrationDelegate {
 	public static void registerBeanPostProcessors(
 			ConfigurableListableBeanFactory beanFactory, AbstractApplicationContext applicationContext) {
 
+		// 从容器中获取 BeanPostProcessor 类型
 		String[] postProcessorNames = beanFactory.getBeanNamesForType(BeanPostProcessor.class, true, false);
 
 		// Register BeanPostProcessorChecker that logs an info message when
 		// a bean is created during BeanPostProcessor instantiation, i.e. when
 		// a bean is not eligible for getting processed by all BeanPostProcessors.
 		int beanProcessorTargetCount = beanFactory.getBeanPostProcessorCount() + 1 + postProcessorNames.length;
+		// 向容器中添加【BeanPostProcessorChecker】，主要是用来检查是不是有 bean 已经初始化完成了，
+		// 如果没有执行所有的 beanPostProcessor（用数量来判断），如果有就会打印一行 info 日志
 		beanFactory.addBeanPostProcessor(new BeanPostProcessorChecker(beanFactory, beanProcessorTargetCount));
 
 		// Separate between BeanPostProcessors that implement PriorityOrdered,
 		// Ordered, and the rest.
+		// 存放实现了 PriorityOrdered 接口的 BeanPostProcessor
 		List<BeanPostProcessor> priorityOrderedPostProcessors = new ArrayList<>();
+		// 存放 MergedBeanDefinitionPostProcessor 类型的 BeanPostProcessor
 		List<BeanPostProcessor> internalPostProcessors = new ArrayList<>();
+		// 存放实现了 Ordered 接口的 BeanPostProcessor 的 name
 		List<String> orderedPostProcessorNames = new ArrayList<>();
+		// 存放剩下来普通的 BeanPostProcessor 的 name
 		List<String> nonOrderedPostProcessorNames = new ArrayList<>();
+		// 从 beanFactory 中查找 postProcessorNames 里的 bean，然后放到对应的集合中
 		for (String ppName : postProcessorNames) {
+			// 判断有无实现 PriorityOrdered 接口
 			if (beanFactory.isTypeMatch(ppName, PriorityOrdered.class)) {
 				BeanPostProcessor pp = beanFactory.getBean(ppName, BeanPostProcessor.class);
 				priorityOrderedPostProcessors.add(pp);
+				// 如果实现了 PriorityOrdered 接口，且属于 MergedBeanDefinitionPostProcessor
 				if (pp instanceof MergedBeanDefinitionPostProcessor) {
+					// 把 MergedBeanDefinitionPostProcessor 类型的添加到 internalPostProcessors 集合中
 					internalPostProcessors.add(pp);
 				}
 			}
@@ -267,10 +278,13 @@ final class PostProcessorRegistrationDelegate {
 		}
 
 		// First, register the BeanPostProcessors that implement PriorityOrdered.
+		// 给 priorityOrderedPostProcessors 排序
 		sortPostProcessors(priorityOrderedPostProcessors, beanFactory);
+		// 先注册实现了 PriorityOrdered 接口的 beanPostProcessor
 		registerBeanPostProcessors(beanFactory, priorityOrderedPostProcessors);
 
 		// Next, register the BeanPostProcessors that implement Ordered.
+		// 从 beanFactory 中查找 orderedPostProcessorNames 里的 bean，然后放到对应的集合中
 		List<BeanPostProcessor> orderedPostProcessors = new ArrayList<>();
 		for (String ppName : orderedPostProcessorNames) {
 			BeanPostProcessor pp = beanFactory.getBean(ppName, BeanPostProcessor.class);
@@ -279,7 +293,9 @@ final class PostProcessorRegistrationDelegate {
 				internalPostProcessors.add(pp);
 			}
 		}
+		// 给 orderedPostProcessors 排序
 		sortPostProcessors(orderedPostProcessors, beanFactory);
+		// 再注册实现了 Ordered 接口的 beanPostProcessor
 		registerBeanPostProcessors(beanFactory, orderedPostProcessors);
 
 		// Now, register all regular BeanPostProcessors.
@@ -291,14 +307,18 @@ final class PostProcessorRegistrationDelegate {
 				internalPostProcessors.add(pp);
 			}
 		}
+		// 最后注册常规的 beanPostProcessor
 		registerBeanPostProcessors(beanFactory, nonOrderedPostProcessors);
 
 		// Finally, re-register all internal BeanPostProcessors.
+		// 排序 MergedBeanDefinitionPostProcessor 这种类型的 beanPostProcessor
 		sortPostProcessors(internalPostProcessors, beanFactory);
+		// 最终注册 MergedBeanDefinitionPostProcessor 类型的 beanPostProcessor
 		registerBeanPostProcessors(beanFactory, internalPostProcessors);
 
 		// Re-register post-processor for detecting inner beans as ApplicationListeners,
 		// moving it to the end of the processor chain (for picking up proxies etc).
+		// 给容器中添加【ApplicationListenerDetector】 beanPostProcessor，容器中默认会有 6 个内置的 beanPostProcessor
 		beanFactory.addBeanPostProcessor(new ApplicationListenerDetector(applicationContext));
 	}
 
