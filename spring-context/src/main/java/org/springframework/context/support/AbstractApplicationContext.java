@@ -544,11 +544,11 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 				initMessageSource();
 
 				// Initialize event multicaster for this context.
-				// 初始化事件派发器
+				// 初始化事件派发器，在注册监听器时会用到
 				initApplicationEventMulticaster();
 
 				// Initialize other special beans in specific context subclasses.
-				// 留给子容器（子类），子类重写这个方法，在容器刷新的时候可以自定义逻辑
+				// 留给子容器（子类），子类重写这个方法，在容器刷新的时候可以自定义逻辑，web 场景下会使用
 				onRefresh();
 
 				// Check for listener beans and register them.
@@ -556,7 +556,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 				registerListeners();
 
 				// Instantiate all remaining (non-lazy-init) singletons.
-				// 实例化所有的非单实例 bean
+				// 初始化所有的非单实例 bean
 				finishBeanFactoryInitialization(beanFactory);
 
 				// Last step: publish corresponding event.
@@ -755,8 +755,11 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	 * Use parent's if none defined in this context.
 	 */
 	protected void initMessageSource() {
+		// 获取 beanFactory
 		ConfigurableListableBeanFactory beanFactory = getBeanFactory();
+		// // 判断容器中是否 messageSource
 		if (beanFactory.containsLocalBean(MESSAGE_SOURCE_BEAN_NAME)) {
+			// 有就从容器中获取赋值
 			this.messageSource = beanFactory.getBean(MESSAGE_SOURCE_BEAN_NAME, MessageSource.class);
 			// Make MessageSource aware of parent MessageSource.
 			if (this.parent != null && this.messageSource instanceof HierarchicalMessageSource) {
@@ -773,9 +776,11 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 		}
 		else {
 			// Use empty MessageSource to be able to accept getMessage calls.
+			// 没有，就创建一个 DelegatingMessageSource
 			DelegatingMessageSource dms = new DelegatingMessageSource();
 			dms.setParentMessageSource(getInternalParentMessageSource());
 			this.messageSource = dms;
+			// 将创建的 DelegatingMessageSource 添加到 BeanFactory 中
 			beanFactory.registerSingleton(MESSAGE_SOURCE_BEAN_NAME, this.messageSource);
 			if (logger.isTraceEnabled()) {
 				logger.trace("No '" + MESSAGE_SOURCE_BEAN_NAME + "' bean, using [" + this.messageSource + "]");
@@ -789,8 +794,11 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	 * @see org.springframework.context.event.SimpleApplicationEventMulticaster
 	 */
 	protected void initApplicationEventMulticaster() {
+		// 获取 beanFactory
 		ConfigurableListableBeanFactory beanFactory = getBeanFactory();
+		// 看看容器中是否有自定义的 applicationEventMulticaster
 		if (beanFactory.containsLocalBean(APPLICATION_EVENT_MULTICASTER_BEAN_NAME)) {
+			// 有就从容器中获取赋值
 			this.applicationEventMulticaster =
 					beanFactory.getBean(APPLICATION_EVENT_MULTICASTER_BEAN_NAME, ApplicationEventMulticaster.class);
 			if (logger.isTraceEnabled()) {
@@ -798,7 +806,9 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 			}
 		}
 		else {
+			// 没有，就创建一个 SimpleApplicationEventMulticaster
 			this.applicationEventMulticaster = new SimpleApplicationEventMulticaster(beanFactory);
+			// 将创建的 ApplicationEventMulticaster 添加到 BeanFactory 中
 			beanFactory.registerSingleton(APPLICATION_EVENT_MULTICASTER_BEAN_NAME, this.applicationEventMulticaster);
 			if (logger.isTraceEnabled()) {
 				logger.trace("No '" + APPLICATION_EVENT_MULTICASTER_BEAN_NAME + "' bean, using " +
@@ -850,18 +860,22 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	 */
 	protected void registerListeners() {
 		// Register statically specified listeners first.
+		// 获取之前步骤中保存的 ApplicationListener
 		for (ApplicationListener<?> listener : getApplicationListeners()) {
+			// getApplicationEventMulticaster() 就是获取之前步骤初始化的 applicationEventMulticaster
 			getApplicationEventMulticaster().addApplicationListener(listener);
 		}
 
 		// Do not initialize FactoryBeans here: We need to leave all regular beans
 		// uninitialized to let post-processors apply to them!
+		// 从容器中获取所有的 ApplicationListener
 		String[] listenerBeanNames = getBeanNamesForType(ApplicationListener.class, true, false);
 		for (String listenerBeanName : listenerBeanNames) {
 			getApplicationEventMulticaster().addApplicationListenerBean(listenerBeanName);
 		}
 
 		// Publish early application events now that we finally have a multicaster...
+		// 派发之前步骤产生的 application events
 		Set<ApplicationEvent> earlyEventsToProcess = this.earlyApplicationEvents;
 		this.earlyApplicationEvents = null;
 		if (earlyEventsToProcess != null) {
