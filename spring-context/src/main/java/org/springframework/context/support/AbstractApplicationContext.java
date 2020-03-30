@@ -515,52 +515,52 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	public void refresh() throws BeansException, IllegalStateException {
 		synchronized (this.startupShutdownMonitor) {
 			// Prepare this context for refreshing.
-			// 刷新前的预处理
+			// 1. 刷新前的预处理
 			prepareRefresh();
 
 			// Tell the subclass to refresh the internal bean factory.
-			// 获取 beanFactory，即前面创建的【DefaultListableBeanFactory】
+			// 2. 获取 beanFactory，即前面创建的【DefaultListableBeanFactory】
 			ConfigurableListableBeanFactory beanFactory = obtainFreshBeanFactory();
 
 			// Prepare the bean factory for use in this context.
-			// 预处理 beanFactory，向容器中添加一些组件
+			// 3. 预处理 beanFactory，向容器中添加一些组件
 			prepareBeanFactory(beanFactory);
 
 			try {
 				// Allows post-processing of the bean factory in context subclasses.
-				// 子类通过重写这个方法可以在 BeanFactory 创建并与准备完成以后做进一步的设置
+				// 4. 子类通过重写这个方法可以在 BeanFactory 创建并与准备完成以后做进一步的设置
 				postProcessBeanFactory(beanFactory);
 
 				// Invoke factory processors registered as beans in the context.
-				// 执行 BeanFactoryPostProcessor 方法，beanFactory 后置处理器
+				// 5. 执行 BeanFactoryPostProcessor 方法，beanFactory 后置处理器
 				invokeBeanFactoryPostProcessors(beanFactory);
 
 				// Register bean processors that intercept bean creation.
-				// 注册 BeanPostProcessors，bean 后置处理器
+				// 6. 注册 BeanPostProcessors，bean 后置处理器
 				registerBeanPostProcessors(beanFactory);
 
 				// Initialize message source for this context.
-				// 初始化 MessageSource 组件（做国际化功能；消息绑定，消息解析）
+				// 7. 初始化 MessageSource 组件（做国际化功能；消息绑定，消息解析）
 				initMessageSource();
 
 				// Initialize event multicaster for this context.
-				// 初始化事件派发器，在注册监听器时会用到
+				// 8. 初始化事件派发器，在注册监听器时会用到
 				initApplicationEventMulticaster();
 
 				// Initialize other special beans in specific context subclasses.
-				// 留给子容器（子类），子类重写这个方法，在容器刷新的时候可以自定义逻辑，web 场景下会使用
+				// 9. 留给子容器（子类），子类重写这个方法，在容器刷新的时候可以自定义逻辑，web 场景下会使用
 				onRefresh();
 
 				// Check for listener beans and register them.
-				// 注册监听器
+				// 10. 注册监听器，派发之前步骤产生的一些事件（可能没有）
 				registerListeners();
 
 				// Instantiate all remaining (non-lazy-init) singletons.
-				// 初始化所有的非单实例 bean
+				// 11. 初始化所有的非单实例 bean
 				finishBeanFactoryInitialization(beanFactory);
 
 				// Last step: publish corresponding event.
-				// 发布容器刷新完成事件
+				// 12. 发布容器刷新完成事件
 				finishRefresh();
 			}
 
@@ -823,8 +823,11 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	 * @see org.springframework.context.support.DefaultLifecycleProcessor
 	 */
 	protected void initLifecycleProcessor() {
+		// 获取 beanFactory
 		ConfigurableListableBeanFactory beanFactory = getBeanFactory();
+		// 看看容器中是否有自定义的 lifecycleProcessor
 		if (beanFactory.containsLocalBean(LIFECYCLE_PROCESSOR_BEAN_NAME)) {
+			// 有就从容器中获取赋值
 			this.lifecycleProcessor =
 					beanFactory.getBean(LIFECYCLE_PROCESSOR_BEAN_NAME, LifecycleProcessor.class);
 			if (logger.isTraceEnabled()) {
@@ -832,9 +835,11 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 			}
 		}
 		else {
+			// 没有就创建一个【DefaultLifecycleProcessor】
 			DefaultLifecycleProcessor defaultProcessor = new DefaultLifecycleProcessor();
 			defaultProcessor.setBeanFactory(beanFactory);
 			this.lifecycleProcessor = defaultProcessor;
+			// 将创建的【DefaultLifecycleProcessor】添加到 BeanFactory 中
 			beanFactory.registerSingleton(LIFECYCLE_PROCESSOR_BEAN_NAME, this.lifecycleProcessor);
 			if (logger.isTraceEnabled()) {
 				logger.trace("No '" + LIFECYCLE_PROCESSOR_BEAN_NAME + "' bean, using " +
@@ -927,15 +932,19 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	 */
 	protected void finishRefresh() {
 		// Clear context-level resource caches (such as ASM metadata from scanning).
+		// 清理缓存
 		clearResourceCaches();
 
 		// Initialize lifecycle processor for this context.
+		// 初始化和生命周期有关的后置处理器
 		initLifecycleProcessor();
 
 		// Propagate refresh to lifecycle processor first.
+		// 拿到前面定义的生命周期处理器【LifecycleProcessor】回调 onRefresh() 方法
 		getLifecycleProcessor().onRefresh();
 
 		// Publish the final event.
+		// 发布容器刷新完成事件
 		publishEvent(new ContextRefreshedEvent(this));
 
 		// Participate in LiveBeansView MBean, if active.

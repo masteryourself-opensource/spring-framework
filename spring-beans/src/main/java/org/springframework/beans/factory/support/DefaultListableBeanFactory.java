@@ -820,13 +820,19 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 
 		// Iterate over a copy to allow for init methods which in turn register new bean definitions.
 		// While this may not be part of the regular factory bootstrap, it does otherwise work fine.
+		// 获取容器中的所有 beanDefinitionName
 		List<String> beanNames = new ArrayList<>(this.beanDefinitionNames);
 
 		// Trigger initialization of all non-lazy singleton beans...
+		// 循环进行初始化和创建对象
 		for (String beanName : beanNames) {
+			// 获取 RootBeanDefinition，它表示自己的 BeanDefinition 和可能存在父类的 BeanDefinition 合并后的对象
 			RootBeanDefinition bd = getMergedLocalBeanDefinition(beanName);
+			// 如果是非抽象的，且单实例，非懒加载
 			if (!bd.isAbstract() && bd.isSingleton() && !bd.isLazyInit()) {
+				// 如果是 factoryBean，利用下面这种方法创建对象
 				if (isFactoryBean(beanName)) {
+					// 如果是 factoryBean，则 加上 &，先创建工厂 bean
 					Object bean = getBean(FACTORY_BEAN_PREFIX + beanName);
 					if (bean instanceof FactoryBean) {
 						final FactoryBean<?> factory = (FactoryBean<?>) bean;
@@ -846,6 +852,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 					}
 				}
 				else {
+					// 不是工厂 bean，用这种方法创建对象
 					getBean(beanName);
 				}
 			}
@@ -854,6 +861,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 		// Trigger post-initialization callback for all applicable beans...
 		for (String beanName : beanNames) {
 			Object singletonInstance = getSingleton(beanName);
+			// 检查所有的 bean 是否是 SmartInitializingSingleton 接口
 			if (singletonInstance instanceof SmartInitializingSingleton) {
 				final SmartInitializingSingleton smartSingleton = (SmartInitializingSingleton) singletonInstance;
 				if (System.getSecurityManager() != null) {
@@ -863,6 +871,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 					}, getAccessControlContext());
 				}
 				else {
+					// 回调 afterSingletonsInstantiated() 方法，可以在回调中做一些事情
 					smartSingleton.afterSingletonsInstantiated();
 				}
 			}

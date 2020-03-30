@@ -71,6 +71,7 @@ import org.springframework.util.StringUtils;
 public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements SingletonBeanRegistry {
 
 	/** Cache of singleton objects: bean name to bean instance. */
+	// 保存所有单实例的 bean
 	private final Map<String, Object> singletonObjects = new ConcurrentHashMap<>(256);
 
 	/** Cache of singleton factories: bean name to ObjectFactory. */
@@ -132,9 +133,13 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 	 */
 	protected void addSingleton(String beanName, Object singletonObject) {
 		synchronized (this.singletonObjects) {
+			// 向 【singletonObjects】 中存一份，Spring 真正存放 bean 的 地方
 			this.singletonObjects.put(beanName, singletonObject);
+			// 从 【singletonFactories】 移除对象
 			this.singletonFactories.remove(beanName);
+			// 从 【earlySingletonObjects】 移除对象
 			this.earlySingletonObjects.remove(beanName);
+			// 向 【registeredSingletons】 中存一份，这个对象是个 set 集合，只保存 beanName
 			this.registeredSingletons.add(beanName);
 		}
 	}
@@ -151,8 +156,11 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 		Assert.notNull(singletonFactory, "Singleton factory must not be null");
 		synchronized (this.singletonObjects) {
 			if (!this.singletonObjects.containsKey(beanName)) {
+				// 向 singletonFactories 中存一份
 				this.singletonFactories.put(beanName, singletonFactory);
+				// 从 【earlySingletonObjects】 移除对象
 				this.earlySingletonObjects.remove(beanName);
+				// 向 【registeredSingletons】 存一份，这个对象是个 set 集合，只保存 beanName
 				this.registeredSingletons.add(beanName);
 			}
 		}
@@ -174,7 +182,10 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 	 */
 	@Nullable
 	protected Object getSingleton(String beanName, boolean allowEarlyReference) {
+		// 从 map 中获取 bean，如果不为空直接返回
+		// 【singletonObjects】里面存放的是已经创建好的 bean 对象
 		Object singletonObject = this.singletonObjects.get(beanName);
+		// 判断【singletonsCurrentlyInCreation】集合中是否包含 beanName，如果包含则表示正在创建
 		if (singletonObject == null && isSingletonCurrentlyInCreation(beanName)) {
 			synchronized (this.singletonObjects) {
 				singletonObject = this.earlySingletonObjects.get(beanName);
@@ -245,6 +256,7 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 					afterSingletonCreation(beanName);
 				}
 				if (newSingleton) {
+					// 如果 bean 已经创建出来了，就添加到【singletonObjects】集合中
 					addSingleton(beanName, singletonObject);
 				}
 			}
