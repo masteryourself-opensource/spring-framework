@@ -5,7 +5,7 @@ import pers.masteryourself.tutorial.spring.framework.tx.config.SpringConfig;
 import pers.masteryourself.tutorial.spring.framework.tx.service.UserService;
 
 /**
- * <p>description : TxApplication
+ * <p>description : TxApplication, Spring Transaction 源码分析
  *
  * <p>blog : https://Blog.csdn.net/masteryourself
  *
