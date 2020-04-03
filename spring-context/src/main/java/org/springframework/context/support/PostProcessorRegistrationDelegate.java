@@ -159,7 +159,7 @@ final class PostProcessorRegistrationDelegate {
 			// Now, invoke the postProcessBeanFactory callback of all processors handled so far.
 			// 现在执行 registryProcessors 的 [postProcessBeanFactory] 回调方法
 			invokeBeanFactoryPostProcessors(registryProcessors, beanFactory);
-			// 执行 regularPostProcessors 的 [postProcessBeanFactory] 回调方法
+			// 执行 regularPostProcessors 的 [postProcessBeanFactory] 回调方法，也包含用户手动调用 addBeanFactoryPostProcessor() 方法添加的 BeanFactoryPostProcessor
 			invokeBeanFactoryPostProcessors(regularPostProcessors, beanFactory);
 		}
 
@@ -307,18 +307,25 @@ final class PostProcessorRegistrationDelegate {
 				internalPostProcessors.add(pp);
 			}
 		}
-		// 最后注册常规的 beanPostProcessor
+		// 再注册常规的 beanPostProcessor
 		registerBeanPostProcessors(beanFactory, nonOrderedPostProcessors);
 
 		// Finally, re-register all internal BeanPostProcessors.
 		// 排序 MergedBeanDefinitionPostProcessor 这种类型的 beanPostProcessor
 		sortPostProcessors(internalPostProcessors, beanFactory);
-		// 最终注册 MergedBeanDefinitionPostProcessor 类型的 beanPostProcessor
+		// 最后注册 MergedBeanDefinitionPostProcessor 类型的 beanPostProcessor
 		registerBeanPostProcessors(beanFactory, internalPostProcessors);
 
 		// Re-register post-processor for detecting inner beans as ApplicationListeners,
 		// moving it to the end of the processor chain (for picking up proxies etc).
-		// 给容器中添加【ApplicationListenerDetector】 beanPostProcessor，容器中默认会有 6 个内置的 beanPostProcessor
+		// 给容器中添加【ApplicationListenerDetector】 beanPostProcessor，判断是不是监听器，如果是就把 bean 放到容器中保存起来
+		// 此时容器中默认会有 6 个内置的 beanPostProcessor
+			// 0 = {ApplicationContextAwareProcessor@1632}
+			//	1 = {ConfigurationClassPostProcessor$ImportAwareBeanPostProcessor@1633}
+			//	2 = {PostProcessorRegistrationDelegate$BeanPostProcessorChecker@1634}
+			//	3 = {CommonAnnotationBeanPostProcessor@1635}
+			//	4 = {AutowiredAnnotationBeanPostProcessor@1636}
+			//	5 = {ApplicationListenerDetector@1637}
 		beanFactory.addBeanPostProcessor(new ApplicationListenerDetector(applicationContext));
 	}
 

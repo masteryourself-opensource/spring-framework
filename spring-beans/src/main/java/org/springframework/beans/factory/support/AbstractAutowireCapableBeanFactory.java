@@ -502,8 +502,8 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		try {
 			// Give BeanPostProcessors a chance to return a proxy instead of the target bean instance.
 			// 给 BeanPostProcessors 一个机会来返回一个代理对象，而不是目标 bean 的实例
-			// 如果后置处理器返回的 bean 不为空，则直接返回该对象，后面的流程也不会执行了
 			Object bean = resolveBeforeInstantiation(beanName, mbdToUse);
+			// 如果后置处理器返回的 bean 不为空，则直接返回该对象，后面的流程也不会执行了，这个【InstantiationAwareBeanPostProcessor】接口一般不会去扩展
 			if (bean != null) {
 				return bean;
 			}
@@ -1109,7 +1109,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 					// 调用 postProcessBeforeInstantiation() 方法
 					bean = applyBeanPostProcessorsBeforeInstantiation(targetType, beanName);
 					if (bean != null) {
-						// 如果返回了一个对象，再调用 postProcessAfterInitialization() 方法
+						// 如果返回了一个对象，会调用所有 BeanPostProcessors 的 postProcessAfterInitialization() 方法
 						bean = applyBeanPostProcessorsAfterInitialization(bean, beanName);
 					}
 				}
@@ -1195,6 +1195,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		}
 
 		// Candidate constructors for autowiring?
+		// 选出最优的构造器来创建 bean 对象
 		Constructor<?>[] ctors = determineConstructorsFromBeanPostProcessors(beanClass, beanName);
 		if (ctors != null || mbd.getResolvedAutowireMode() == AUTOWIRE_CONSTRUCTOR ||
 				mbd.hasConstructorArgumentValues() || !ObjectUtils.isEmpty(args)) {
@@ -1278,6 +1279,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 
 		if (beanClass != null && hasInstantiationAwareBeanPostProcessors()) {
 			for (BeanPostProcessor bp : getBeanPostProcessors()) {
+				// 【SmartInstantiationAwareBeanPostProcessor】决定使用哪个构造器来创建 bean 对象
 				if (bp instanceof SmartInstantiationAwareBeanPostProcessor) {
 					SmartInstantiationAwareBeanPostProcessor ibp = (SmartInstantiationAwareBeanPostProcessor) bp;
 					Constructor<?>[] ctors = ibp.determineCandidateConstructors(beanClass, beanName);
@@ -1429,6 +1431,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 						if (filteredPds == null) {
 							filteredPds = filterPropertyDescriptorsForDependencyCheck(bw, mbd.allowCaching);
 						}
+						// 调用【InstantiationAwareBeanPostProcessor】的 postProcessPropertyValues() 方法
 						pvsToUse = ibp.postProcessPropertyValues(pvs, filteredPds, bw.getWrappedInstance(), beanName);
 						if (pvsToUse == null) {
 							return;
@@ -1785,7 +1788,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 
 		Object wrappedBean = bean;
 		if (mbd == null || !mbd.isSynthetic()) {
-			// 执行【BeanPostProcessor】的 postProcessBeforeInitialization() 方法
+			// 执行所有【BeanPostProcessor】的 postProcessBeforeInitialization() 方法
 			wrappedBean = applyBeanPostProcessorsBeforeInitialization(wrappedBean, beanName);
 		}
 
@@ -1799,7 +1802,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 					beanName, "Invocation of init method failed", ex);
 		}
 		if (mbd == null || !mbd.isSynthetic()) {
-			// 执行【BeanPostProcessor】的 postProcessAfterInitialization() 方法
+			// 执行所有【BeanPostProcessor】的 postProcessAfterInitialization() 方法
 			wrappedBean = applyBeanPostProcessorsAfterInitialization(wrappedBean, beanName);
 		}
 

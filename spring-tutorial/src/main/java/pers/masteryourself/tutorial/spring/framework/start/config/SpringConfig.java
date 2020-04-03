@@ -1,5 +1,6 @@
 package pers.masteryourself.tutorial.spring.framework.start.config;
 
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
 /**
@@ -12,5 +13,6 @@ import org.springframework.context.annotation.Configuration;
  * @date : 2020/4/3 21:11
  */
 @Configuration
+@ComponentScan
 public class SpringConfig {
 }

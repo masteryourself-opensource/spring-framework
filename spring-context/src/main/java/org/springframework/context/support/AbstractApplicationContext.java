@@ -808,7 +808,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 		else {
 			// 没有，就创建一个 SimpleApplicationEventMulticaster
 			this.applicationEventMulticaster = new SimpleApplicationEventMulticaster(beanFactory);
-			// 将创建的 ApplicationEventMulticaster 添加到 BeanFactory 中
+			// 将创建的 ApplicationEventMulticaster 添加到 BeanFactory 中， 其他组件就可以自动注入了
 			beanFactory.registerSingleton(APPLICATION_EVENT_MULTICASTER_BEAN_NAME, this.applicationEventMulticaster);
 			if (logger.isTraceEnabled()) {
 				logger.trace("No '" + APPLICATION_EVENT_MULTICASTER_BEAN_NAME + "' bean, using " +
@@ -922,6 +922,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 		beanFactory.freezeConfiguration();
 
 		// Instantiate all remaining (non-lazy-init) singletons.
+		// 初始化剩下来的所有单实例 bean
 		beanFactory.preInstantiateSingletons();
 	}
 
