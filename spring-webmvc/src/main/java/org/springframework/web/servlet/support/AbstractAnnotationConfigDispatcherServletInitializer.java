@@ -49,6 +49,7 @@ public abstract class AbstractAnnotationConfigDispatcherServletInitializer
 	 * <p>This implementation creates an {@link AnnotationConfigWebApplicationContext},
 	 * providing it the annotated classes returned by {@link #getRootConfigClasses()}.
 	 * Returns {@code null} if {@link #getRootConfigClasses()} returns {@code null}.
+	 * 创建 Spring 容器
 	 */
 	@Override
 	@Nullable
@@ -68,6 +69,7 @@ public abstract class AbstractAnnotationConfigDispatcherServletInitializer
 	 * {@inheritDoc}
 	 * <p>This implementation creates an {@link AnnotationConfigWebApplicationContext},
 	 * providing it the annotated classes returned by {@link #getServletConfigClasses()}.
+	 * 创建 Spring MVC 容器
 	 */
 	@Override
 	protected WebApplicationContext createServletApplicationContext() {
@@ -84,6 +86,7 @@ public abstract class AbstractAnnotationConfigDispatcherServletInitializer
 	 * {@linkplain #createRootApplicationContext() root application context}.
 	 * @return the configuration for the root application context, or {@code null}
 	 * if creation and registration of a root context is not desired
+	 * 获取 Spring 配置类
 	 */
 	@Nullable
 	protected abstract Class<?>[] getRootConfigClasses();
@@ -93,6 +96,7 @@ public abstract class AbstractAnnotationConfigDispatcherServletInitializer
 	 * {@linkplain #createServletApplicationContext() Servlet application context}.
 	 * @return the configuration for the Servlet application context, or
 	 * {@code null} if all configuration is specified through root config classes.
+	 * 获取 Spring MVC 配置类
 	 */
 	@Nullable
 	protected abstract Class<?>[] getServletConfigClasses();
