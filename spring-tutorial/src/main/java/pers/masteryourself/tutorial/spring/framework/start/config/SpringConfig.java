@@ -1,5 +1,6 @@
 package pers.masteryourself.tutorial.spring.framework.start.config;
 
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
@@ -14,5 +15,14 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 @ComponentScan
-public class SpringConfig {
+public class SpringConfig implements DisposableBean {
+
+	public SpringConfig() {
+		System.out.println("SpringConfig constructor");
+	}
+
+	@Override
+	public void destroy() throws Exception {
+		System.out.println("xxxx");
+	}
 }

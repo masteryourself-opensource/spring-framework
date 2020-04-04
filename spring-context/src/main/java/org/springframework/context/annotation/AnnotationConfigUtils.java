@@ -159,13 +159,13 @@ public abstract class AnnotationConfigUtils {
 		}
 
 		Set<BeanDefinitionHolder> beanDefs = new LinkedHashSet<>(8);
-		// 向 beanDefinitionMap 中注册组件：【ConfigurationClassPostProcessor】
+		// 向 beanDefinitionMap 中注册【BeanFactoryPostProcessor】：【ConfigurationClassPostProcessor】
 		if (!registry.containsBeanDefinition(CONFIGURATION_ANNOTATION_PROCESSOR_BEAN_NAME)) {
 			RootBeanDefinition def = new RootBeanDefinition(ConfigurationClassPostProcessor.class);
 			def.setSource(source);
 			beanDefs.add(registerPostProcessor(registry, def, CONFIGURATION_ANNOTATION_PROCESSOR_BEAN_NAME));
 		}
-		// 向 beanDefinitionMap 中注册组件：【AutowiredAnnotationBeanPostProcessor】
+		// 向 beanDefinitionMap 中注册【BeanPostProcessor】：【AutowiredAnnotationBeanPostProcessor】
 		if (!registry.containsBeanDefinition(AUTOWIRED_ANNOTATION_PROCESSOR_BEAN_NAME)) {
 			RootBeanDefinition def = new RootBeanDefinition(AutowiredAnnotationBeanPostProcessor.class);
 			def.setSource(source);
@@ -173,7 +173,7 @@ public abstract class AnnotationConfigUtils {
 		}
 
 		// Check for JSR-250 support, and if present add the CommonAnnotationBeanPostProcessor.
-		// 向 beanDefinitionMap 中注册组件：【CommonAnnotationBeanPostProcessor】
+		// 向 beanDefinitionMap 中注册【BeanPostProcessor】：【CommonAnnotationBeanPostProcessor】
 		if (jsr250Present && !registry.containsBeanDefinition(COMMON_ANNOTATION_PROCESSOR_BEAN_NAME)) {
 			RootBeanDefinition def = new RootBeanDefinition(CommonAnnotationBeanPostProcessor.class);
 			def.setSource(source);
@@ -181,7 +181,7 @@ public abstract class AnnotationConfigUtils {
 		}
 
 		// Check for JPA support, and if present add the PersistenceAnnotationBeanPostProcessor.
-		// 向 beanDefinitionMap 中注册组件：【PersistenceAnnotationBeanPostProcessor】，前提条件是在 jpa 环境下
+		// 向 beanDefinitionMap 中注册【BeanPostProcessor】：【PersistenceAnnotationBeanPostProcessor】，前提条件是在 jpa 环境下
 		if (jpaPresent && !registry.containsBeanDefinition(PERSISTENCE_ANNOTATION_PROCESSOR_BEAN_NAME)) {
 			RootBeanDefinition def = new RootBeanDefinition();
 			try {
@@ -195,7 +195,7 @@ public abstract class AnnotationConfigUtils {
 			def.setSource(source);
 			beanDefs.add(registerPostProcessor(registry, def, PERSISTENCE_ANNOTATION_PROCESSOR_BEAN_NAME));
 		}
-		// 向 beanDefinitionMap 中注册组件：【EventListenerMethodProcessor】
+		// 向 beanDefinitionMap 中注册【BeanFactoryPostProcessor】：【EventListenerMethodProcessor】
 		if (!registry.containsBeanDefinition(EVENT_LISTENER_PROCESSOR_BEAN_NAME)) {
 			RootBeanDefinition def = new RootBeanDefinition(EventListenerMethodProcessor.class);
 			def.setSource(source);

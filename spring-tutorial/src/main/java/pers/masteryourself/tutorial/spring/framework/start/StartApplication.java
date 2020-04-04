@@ -20,6 +20,13 @@ import pers.masteryourself.tutorial.spring.framework.start.config.SpringConfig;
 public class StartApplication {
 
 	public static void main(String[] args) {
+		/**
+		 * 第一种启动方式
+		 */
+		// AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(SpringConfig.class);
+		/**
+		 * 第二种启动方式
+		 */
 		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
 		context.addBeanFactoryPostProcessor(new BeanDefinitionRegistryPostProcessor() {
 			@Override
