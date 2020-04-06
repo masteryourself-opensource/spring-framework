@@ -239,6 +239,11 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 	protected <T> T doGetBean(final String name, @Nullable final Class<T> requiredType,
 			@Nullable final Object[] args, boolean typeCheckOnly) throws BeansException {
 
+		/**
+		 * 通过 name 获取 beanName，这里不使用 name 直接作为 beanName 有两个原因
+		 * 1. name 可能会以 & 字符开头，表示调用者想获取 {@link FactoryBean} 本身，而非 {@link FactoryBean} 创建的 bean 对象
+		 * 2. 处理别名
+		 */
 		final String beanName = transformedBeanName(name);
 		Object bean;
 
