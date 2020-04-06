@@ -7,7 +7,7 @@ import pers.masteryourself.tutorial.spring.framework.tx.service.UserService;
 /**
  * <p>description : TxApplication, Spring Transaction 源码分析
  *
- * <p>blog : https://Blog.csdn.net/masteryourself
+ * <p>blog : https://blog.csdn.net/masteryourself
  *
  * @author : masteryourself
  * @version : 1.0.0
