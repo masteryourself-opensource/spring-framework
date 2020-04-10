@@ -1,5 +1,9 @@
 package pers.masteryourself.tutorial.spring.framework.scan.config;
 
+import org.springframework.context.annotation.ImportSelector;
+import org.springframework.core.type.AnnotationMetadata;
+import pers.masteryourself.tutorial.spring.framework.scan.bean.Dog;
+
 /**
  * <p>description : ExtImportSelector
  *
@@ -9,5 +13,11 @@ package pers.masteryourself.tutorial.spring.framework.scan.config;
  * @version : 1.0.0
  * @date : 2020/4/11 0:22
  */
-public class ExtImportSelector {
+public class ExtImportSelector implements ImportSelector {
+
+	@Override
+	public String[] selectImports(AnnotationMetadata importingClassMetadata) {
+		return new String[]{Dog.class.getName()};
+	}
+
 }

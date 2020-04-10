@@ -1,5 +1,9 @@
 package pers.masteryourself.tutorial.spring.framework.scan.config;
 
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
+import pers.masteryourself.tutorial.spring.framework.scan.bean.Cat;
+
 /**
  * <p>description : SpringConfig
  *
@@ -9,5 +13,7 @@ package pers.masteryourself.tutorial.spring.framework.scan.config;
  * @version : 1.0.0
  * @date : 2020/4/11 0:20
  */
+@Configuration
+@Import({Cat.class, ExtImportSelector.class, ExtImportBeanDefinitionRegistrar.class})
 public class SpringConfig {
 }
