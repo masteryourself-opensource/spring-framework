@@ -1,9 +1,7 @@
 package pers.masteryourself.tutorial.spring.framework.scan.config;
 
-import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
-import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
 import org.springframework.core.type.AnnotationMetadata;
 import pers.masteryourself.tutorial.spring.framework.scan.bean.Mouse;

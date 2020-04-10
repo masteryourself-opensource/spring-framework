@@ -113,6 +113,10 @@ class ConfigurationClassBeanDefinitionReader {
 	 */
 	public void loadBeanDefinitions(Set<ConfigurationClass> configurationModel) {
 		TrackedConditionEvaluator trackedConditionEvaluator = new TrackedConditionEvaluator();
+		// 循环处理这三个类
+		// 0 = {ConfigurationClass@1229} "ConfigurationClass: beanName 'null', pers.masteryourself.tutorial.spring.framework.scan.bean.Cat"
+		// 1 = {ConfigurationClass@1272} "ConfigurationClass: beanName 'null', class path resource [pers/masteryourself/tutorial/spring/framework/scan/bean/Dog.class]"
+		// 2 = {ConfigurationClass@1197} "ConfigurationClass: beanName 'springConfig', pers.masteryourself.tutorial.spring.framework.scan.config.SpringConfig"
 		for (ConfigurationClass configClass : configurationModel) {
 			loadBeanDefinitionsForConfigurationClass(configClass, trackedConditionEvaluator);
 		}
@@ -133,15 +137,18 @@ class ConfigurationClassBeanDefinitionReader {
 			this.importRegistry.removeImportingClass(configClass.getMetadata().getClassName());
 			return;
 		}
-
+		// 如果这个类是被 @Import 导入进来的，【Cat】和【Dog】会进入这个方法
 		if (configClass.isImported()) {
+			// 最终调用 registerBeanDefinition() 方法注册到 BeanDefinition 中
 			registerBeanDefinitionForImportedConfigurationClass(configClass);
 		}
+		// 处理 @Bean 注解的方法，调用这个方法注册到 BeanDefinition 中
 		for (BeanMethod beanMethod : configClass.getBeanMethods()) {
 			loadBeanDefinitionsForBeanMethod(beanMethod);
 		}
-
+		// 处理 @ImportResource 注解导入的 xml 文件
 		loadBeanDefinitionsFromImportedResources(configClass.getImportedResources());
+		// configClass.getImportBeanDefinitionRegistrars() 方法获取的是之前存储的【ImportBeanDefinitionRegistrar】集合，如【ExtImportBeanDefinitionRegistrar】
 		loadBeanDefinitionsFromRegistrars(configClass.getImportBeanDefinitionRegistrars());
 	}
 
@@ -361,6 +368,7 @@ class ConfigurationClassBeanDefinitionReader {
 
 	private void loadBeanDefinitionsFromRegistrars(Map<ImportBeanDefinitionRegistrar, AnnotationMetadata> registrars) {
 		registrars.forEach((registrar, metadata) ->
+				// 回调用户实现的 registerBeanDefinitions() 方法
 				registrar.registerBeanDefinitions(metadata, this.registry));
 	}
 

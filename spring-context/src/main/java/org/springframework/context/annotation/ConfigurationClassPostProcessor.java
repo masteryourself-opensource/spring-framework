@@ -259,18 +259,29 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
 	 * {@link Configuration} classes.
 	 */
 	public void processConfigBeanDefinitions(BeanDefinitionRegistry registry) {
+		// 存放所有的 BeanDefinition 信息，BeanDefinitionHolder 里包含了 BeanDefinition
 		List<BeanDefinitionHolder> configCandidates = new ArrayList<>();
+		// 获取容器中所有 bean 的名称，此时有 6 个
+		// 0 = "org.springframework.context.annotation.internalConfigurationAnnotationProcessor"
+		// 1 = "org.springframework.context.annotation.internalAutowiredAnnotationProcessor"
+		// 2 = "org.springframework.context.annotation.internalCommonAnnotationProcessor"
+		// 3 = "org.springframework.context.event.internalEventListenerProcessor"
+		// 4 = "org.springframework.context.event.internalEventListenerFactory"
+		// 5 = "springConfig"
 		String[] candidateNames = registry.getBeanDefinitionNames();
 
 		for (String beanName : candidateNames) {
 			BeanDefinition beanDef = registry.getBeanDefinition(beanName);
+			// 如果 beanDef 的 configurationClass 属性为 full 或者 lite，则表示已经处理过了
 			if (ConfigurationClassUtils.isFullConfigurationClass(beanDef) ||
 					ConfigurationClassUtils.isLiteConfigurationClass(beanDef)) {
 				if (logger.isDebugEnabled()) {
 					logger.debug("Bean definition has already been processed as a configuration class: " + beanDef);
 				}
 			}
+			// 判断是否有注解，如 @Configuration、@Component、@ComponentScan、@Import、@ImportResource、@Bean 注解
 			else if (ConfigurationClassUtils.checkConfigurationClassCandidate(beanDef, this.metadataReaderFactory)) {
+				// 满足以上条件才会放到 configCandidates 集合中，这里只有【SpringConfig】
 				configCandidates.add(new BeanDefinitionHolder(beanDef, beanName));
 			}
 		}
@@ -305,16 +316,25 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
 		}
 
 		// Parse each @Configuration class
+		// 初始化 ConfigurationClassParser，用于解析配置类
 		ConfigurationClassParser parser = new ConfigurationClassParser(
 				this.metadataReaderFactory, this.problemReporter, this.environment,
 				this.resourceLoader, this.componentScanBeanNameGenerator, registry);
 
+		// 用于去重复
 		Set<BeanDefinitionHolder> candidates = new LinkedHashSet<>(configCandidates);
+		// 判断是否处理过
 		Set<ConfigurationClass> alreadyParsed = new HashSet<>(configCandidates.size());
 		do {
+			// 重点，解析配置类，这里就只有【springConfig】
+			// Bean definition with name 'springConfig': Generic bean: class [pers.masteryourself.tutorial.spring.framework.scan.config.SpringConfig]; scope=singleton; abstract=false; lazyInit=false; autowireMode=0; dependencyCheck=0; autowireCandidate=true; primary=false; factoryBeanName=null; factoryMethodName=null; initMethodName=null; destroyMethodName=null
 			parser.parse(candidates);
 			parser.validate();
 
+			// 获取 parser() 方法解析后的类，这里有 3 个，如下所示：
+			// 0 = {ConfigurationClass@1471} "ConfigurationClass: beanName 'null', pers.masteryourself.tutorial.spring.framework.scan.bean.Cat"
+			// 1 = {ConfigurationClass@1272} "ConfigurationClass: beanName 'null', class path resource [pers/masteryourself/tutorial/spring/framework/scan/bean/Dog.class]"
+			// 2 = {ConfigurationClass@1197} "ConfigurationClass: beanName 'springConfig', pers.masteryourself.tutorial.spring.framework.scan.config.SpringConfig"
 			Set<ConfigurationClass> configClasses = new LinkedHashSet<>(parser.getConfigurationClasses());
 			configClasses.removeAll(alreadyParsed);
 
@@ -324,6 +344,7 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
 						registry, this.sourceExtractor, this.resourceLoader, this.environment,
 						this.importBeanNameGenerator, parser.getImportRegistry());
 			}
+			// 调用 loadBeanDefinitions() 方法进行注册 BeanDefinition
 			this.reader.loadBeanDefinitions(configClasses);
 			alreadyParsed.addAll(configClasses);
 

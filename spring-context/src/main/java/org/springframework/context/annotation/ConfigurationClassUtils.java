@@ -90,11 +90,13 @@ abstract class ConfigurationClassUtils {
 		if (beanDef instanceof AnnotatedBeanDefinition &&
 				className.equals(((AnnotatedBeanDefinition) beanDef).getMetadata().getClassName())) {
 			// Can reuse the pre-parsed metadata from the given BeanDefinition...
+			// 如果 BeanDefinition 是 AnnotatedBeanDefinition 的类型，就转成 AnnotatedBeanDefinition 获取元数据
 			metadata = ((AnnotatedBeanDefinition) beanDef).getMetadata();
 		}
 		else if (beanDef instanceof AbstractBeanDefinition && ((AbstractBeanDefinition) beanDef).hasBeanClass()) {
 			// Check already loaded Class if present...
 			// since we possibly can't even load the class file for this Class.
+			// 如果 BeanDefinition 是 AbstractBeanDefinition 的类型，就包装成 StandardAnnotationMetadata 获取元数据
 			Class<?> beanClass = ((AbstractBeanDefinition) beanDef).getBeanClass();
 			metadata = new StandardAnnotationMetadata(beanClass, true);
 		}
@@ -111,10 +113,11 @@ abstract class ConfigurationClassUtils {
 				return false;
 			}
 		}
-
+		// 如果被 @Configuration 注解标注，给 BeanDefinition 添加 full 属性
 		if (isFullConfigurationCandidate(metadata)) {
 			beanDef.setAttribute(CONFIGURATION_CLASS_ATTRIBUTE, CONFIGURATION_CLASS_FULL);
 		}
+		// 如果被 @Component、@ComponentScan、@Import、@ImportResource、@Bean 注解标注，给 BeanDefinition 添加 lite 属性
 		else if (isLiteConfigurationCandidate(metadata)) {
 			beanDef.setAttribute(CONFIGURATION_CLASS_ATTRIBUTE, CONFIGURATION_CLASS_LITE);
 		}
@@ -168,6 +171,11 @@ abstract class ConfigurationClassUtils {
 		}
 
 		// Any of the typical annotations found?
+		// candidateIndicators 存储的注解集合如下：
+		// candidateIndicators.add(Component.class.getName());
+		// candidateIndicators.add(ComponentScan.class.getName());
+		// candidateIndicators.add(Import.class.getName());
+		// candidateIndicators.add(ImportResource.class.getName());
 		for (String indicator : candidateIndicators) {
 			if (metadata.isAnnotated(indicator)) {
 				return true;
