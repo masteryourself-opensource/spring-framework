@@ -243,6 +243,7 @@ class ConfigurationClassParser {
 			// 调用 doProcessConfigurationClass 方法进行解析，这个方法会被递归调用，但是 configClass 一直在变
 			sourceClass = doProcessConfigurationClass(configClass, sourceClass);
 		}
+		// 注意这里的循环条件，只有返回 null 才会结束
 		while (sourceClass != null);
 		// 用来存放扫描出来的 bean（这里的 bean 不是对象，仅仅是 bean 的信息，还没有初始化）
 		this.configurationClasses.put(configClass, configClass);
