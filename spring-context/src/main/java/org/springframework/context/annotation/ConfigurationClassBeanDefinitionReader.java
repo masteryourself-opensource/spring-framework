@@ -139,10 +139,10 @@ class ConfigurationClassBeanDefinitionReader {
 		}
 		// 如果这个类是被 @Import 导入进来的，【Cat】和【Dog】会进入这个方法
 		if (configClass.isImported()) {
-			// 最终调用 registerBeanDefinition() 方法注册到 BeanDefinition 中
+			// 最终调用 registerBeanDefinition() 方法注册到 beanDefinitionMap 属性中
 			registerBeanDefinitionForImportedConfigurationClass(configClass);
 		}
-		// 处理 @Bean 注解的方法，调用这个方法注册到 BeanDefinition 中
+		// 处理 @Bean 注解的方法，调用这个方法注册到 beanDefinitionMap 属性中
 		for (BeanMethod beanMethod : configClass.getBeanMethods()) {
 			loadBeanDefinitionsForBeanMethod(beanMethod);
 		}
@@ -368,7 +368,7 @@ class ConfigurationClassBeanDefinitionReader {
 
 	private void loadBeanDefinitionsFromRegistrars(Map<ImportBeanDefinitionRegistrar, AnnotationMetadata> registrars) {
 		registrars.forEach((registrar, metadata) ->
-				// 回调用户实现的 registerBeanDefinitions() 方法
+				// 回调用户实现的 registerBeanDefinitions() 方法，完成手动注册
 				registrar.registerBeanDefinitions(metadata, this.registry));
 	}
 

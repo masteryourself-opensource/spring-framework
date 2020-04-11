@@ -602,7 +602,7 @@ class ConfigurationClassParser {
 						// 把 registrar 添加到【configClass】的 importBeanDefinitionRegistrars 属性中，后面才会回调 registerBeanDefinitions() 方法进行处理
 						configClass.addImportBeanDefinitionRegistrar(registrar, currentSourceClass.getMetadata());
 					}
-					// 2. 第三种情况：直接导入的类，如【Cat】（第一种情况回调 selectImports() 方法返回的 bean 最终也会进入到这里，如【Dog】）
+					// 3. 第三种情况：直接导入的类，如【Cat】（第一种情况回调 selectImports() 方法返回的 bean 最终也会进入到这里，如【Dog】）
 					else {
 						// Candidate class not an ImportSelector or ImportBeanDefinitionRegistrar ->
 						// process it as an @Configuration class

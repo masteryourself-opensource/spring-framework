@@ -215,6 +215,7 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
 
 	/**
 	 * Derive further bean definitions from the configuration classes in the registry.
+	 * 它是 {@link BeanDefinitionRegistryPostProcessor} 规定的方法，会回调容器中所有的 postProcessBeanDefinitionRegistry() 方法
 	 */
 	@Override
 	public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry) {
@@ -228,7 +229,7 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
 					"postProcessBeanFactory already called on this post-processor against " + registry);
 		}
 		this.registriesPostProcessed.add(registryId);
-
+		// 调用这个方法处理
 		processConfigBeanDefinitions(registry);
 	}
 
