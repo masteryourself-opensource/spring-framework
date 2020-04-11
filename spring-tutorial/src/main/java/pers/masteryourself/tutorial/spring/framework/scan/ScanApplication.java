@@ -16,9 +16,10 @@ import java.util.Arrays;
  */
 public class ScanApplication {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception {
 		AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(SpringConfig.class);
 		System.out.println(Arrays.toString(context.getBeanDefinitionNames()));
+		System.in.read();
 	}
 
 }

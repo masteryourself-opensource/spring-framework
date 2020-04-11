@@ -218,14 +218,16 @@ class ConfigurationClassBeanDefinitionReader {
 		ConfigurationClassBeanDefinition beanDef = new ConfigurationClassBeanDefinition(configClass, metadata);
 		beanDef.setResource(configClass.getResource());
 		beanDef.setSource(this.sourceExtractor.extractSource(metadata, configClass.getResource()));
-
+		// 判断是不是静态方法
 		if (metadata.isStatic()) {
 			// static @Bean method
+			// 直接设置 bean
 			beanDef.setBeanClassName(configClass.getMetadata().getClassName());
 			beanDef.setFactoryMethodName(methodName);
 		}
 		else {
 			// instance @Bean method
+			// 如果不是静态方法，会为其设置 FactoryBean 属性，所以通过 @Bean 注解标注的方法都是利用 FactoryBean 完成创建的
 			beanDef.setFactoryBeanName(configClass.getBeanName());
 			beanDef.setUniqueFactoryMethodName(methodName);
 		}

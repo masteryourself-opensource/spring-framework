@@ -1,9 +1,12 @@
 package pers.masteryourself.tutorial.spring.framework.scan.config;
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import pers.masteryourself.tutorial.spring.framework.scan.bean.Cat;
+import pers.masteryourself.tutorial.spring.framework.scan.bean.Person1;
+import pers.masteryourself.tutorial.spring.framework.scan.bean.Person2;
 
 /**
  * <p>description : SpringConfig
@@ -18,4 +21,17 @@ import pers.masteryourself.tutorial.spring.framework.scan.bean.Cat;
 @ComponentScan
 @Import({Cat.class, ExtImportSelector.class, ExtImportBeanDefinitionRegistrar.class})
 public class SpringConfig {
+
+	@Bean
+	public Person1 person1() {
+		return new Person1();
+	}
+
+	@Bean
+	public Person2 person2() {
+		// 这个方法会走代理，不会重新创建 Person1 对象
+		this.person1();
+		return new Person2();
+	}
+
 }
