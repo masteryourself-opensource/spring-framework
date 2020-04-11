@@ -11,8 +11,8 @@
 //import org.springframework.cglib.proxy.MethodProxy;
 //import org.springframework.cglib.proxy.NoOp;
 //import org.springframework.context.annotation.ConfigurationClassEnhancer;
-//import pers.masteryourself.tutorial.spring.framework.scan.bean.Person1;
-//import pers.masteryourself.tutorial.spring.framework.scan.bean.Person2;
+//import pers.masteryourself.tutorial.spring.framework.configurationclasspostprocessor.bean.Person1;
+//import pers.masteryourself.tutorial.spring.framework.configurationclasspostprocessor.bean.Person2;
 //import pers.masteryourself.tutorial.spring.framework.scan.config.SpringConfig;
 //
 //public class SpringConfig$$EnhancerBySpringCGLIB$$e52654b5

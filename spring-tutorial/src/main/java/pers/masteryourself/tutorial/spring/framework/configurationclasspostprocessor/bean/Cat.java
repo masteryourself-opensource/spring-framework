@@ -1,4 +1,4 @@
-package pers.masteryourself.tutorial.spring.framework.scan.bean;
+package pers.masteryourself.tutorial.spring.framework.configurationclasspostprocessor.bean;
 
 /**
  * <p>description : Cat

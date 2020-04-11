@@ -1,8 +1,8 @@
-package pers.masteryourself.tutorial.spring.framework.scan.config;
+package pers.masteryourself.tutorial.spring.framework.configurationclasspostprocessor.config;
 
 import org.springframework.context.annotation.ImportSelector;
 import org.springframework.core.type.AnnotationMetadata;
-import pers.masteryourself.tutorial.spring.framework.scan.bean.Dog;
+import pers.masteryourself.tutorial.spring.framework.configurationclasspostprocessor.bean.Dog;
 
 /**
  * <p>description : ExtImportSelector

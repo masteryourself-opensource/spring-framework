@@ -1,4 +1,4 @@
-package pers.masteryourself.tutorial.spring.framework.scan.config;
+package pers.masteryourself.tutorial.spring.framework.configurationclasspostprocessor.config;
 
 import org.springframework.stereotype.Component;
 

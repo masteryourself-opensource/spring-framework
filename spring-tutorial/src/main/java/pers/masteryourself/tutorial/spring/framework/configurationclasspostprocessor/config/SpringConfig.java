@@ -1,12 +1,12 @@
-package pers.masteryourself.tutorial.spring.framework.scan.config;
+package pers.masteryourself.tutorial.spring.framework.configurationclasspostprocessor.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
-import pers.masteryourself.tutorial.spring.framework.scan.bean.Cat;
-import pers.masteryourself.tutorial.spring.framework.scan.bean.Person1;
-import pers.masteryourself.tutorial.spring.framework.scan.bean.Person2;
+import pers.masteryourself.tutorial.spring.framework.configurationclasspostprocessor.bean.Cat;
+import pers.masteryourself.tutorial.spring.framework.configurationclasspostprocessor.bean.Person1;
+import pers.masteryourself.tutorial.spring.framework.configurationclasspostprocessor.bean.Person2;
 
 /**
  * <p>description : SpringConfig

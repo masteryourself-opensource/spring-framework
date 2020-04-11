@@ -1,12 +1,10 @@
-package pers.masteryourself.tutorial.spring.framework.scan.config;
+package pers.masteryourself.tutorial.spring.framework.configurationclasspostprocessor.config;
 
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
 import org.springframework.core.type.AnnotationMetadata;
-import pers.masteryourself.tutorial.spring.framework.scan.bean.Mouse;
-
-import java.util.Map;
+import pers.masteryourself.tutorial.spring.framework.configurationclasspostprocessor.bean.Mouse;
 
 /**
  * <p>description : ExtImportBeanDefinitionRegistrar
