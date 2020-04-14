@@ -1,4 +1,4 @@
-//package pers.masteryourself.tutorial.spring.framework.configurationclasspostprocessor.config;
+package pers.masteryourself.tutorial.spring.framework.configurationclasspostprocessor.config;//package pers.masteryourself.tutorial.spring.framework.configurationclasspostprocessor.config;
 //
 //import java.lang.reflect.Method;
 //import org.springframework.beans.BeansException;
