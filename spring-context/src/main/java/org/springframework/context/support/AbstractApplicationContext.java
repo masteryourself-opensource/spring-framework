@@ -511,6 +511,12 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 		return this.applicationListeners;
 	}
 
+	/**
+	 * spring 父子容器刷新问题
+	 * 如果项目中有使用父子容器刷新，这个方法会进入两次，初始化两个完全不同的 beanFactory
+	 * @throws BeansException
+	 * @throws IllegalStateException
+	 */
 	@Override
 	public void refresh() throws BeansException, IllegalStateException {
 		synchronized (this.startupShutdownMonitor) {

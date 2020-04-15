@@ -258,6 +258,8 @@ public class ContextLoader {
 	 * @see #CONFIG_LOCATION_PARAM
 	 */
 	public WebApplicationContext initWebApplicationContext(ServletContext servletContext) {
+		// servletContext 保存了一个属性，key 是 [org.springframework.web.context.WebApplicationContext.ROOT]，value 即【WebApplicationContext】容器对象
+		// 这里首先判断有没有初始化过 Spring 容器，初始化完毕后这个属性不为空，就会抛出异常，防止重复初始化
 		if (servletContext.getAttribute(WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE) != null) {
 			throw new IllegalStateException(
 					"Cannot initialize context because there is already a root application context present - " +
@@ -282,15 +284,18 @@ public class ContextLoader {
 				if (!cwac.isActive()) {
 					// The context has not yet been refreshed -> provide services such as
 					// setting the parent context, setting the application context id, etc
+					// 判断有没有父容器，这里的 Spring 容器肯定没有父容器，下面的 loadParentContext() 方法也是空的
 					if (cwac.getParent() == null) {
 						// The context instance was injected without an explicit parent ->
 						// determine parent for root web application context, if any.
 						ApplicationContext parent = loadParentContext(servletContext);
 						cwac.setParent(parent);
 					}
+					// 配置和刷新 Spring 容器
 					configureAndRefreshWebApplicationContext(cwac, servletContext);
 				}
 			}
+			// 上面 Spring 容器已经刷新完毕了，给 servletContext 赋值，表示父容器已经初始化了
 			servletContext.setAttribute(WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE, this.context);
 
 			ClassLoader ccl = Thread.currentThread().getContextClassLoader();
@@ -397,6 +402,7 @@ public class ContextLoader {
 		}
 
 		customizeContext(sc, wac);
+		// 调用 refresh() 方法刷新容器
 		wac.refresh();
 	}
 
