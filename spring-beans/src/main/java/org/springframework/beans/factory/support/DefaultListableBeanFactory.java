@@ -407,11 +407,12 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 
 	@Nullable
 	private <T> T resolveBean(ResolvableType requiredType, @Nullable Object[] args, boolean nonUniqueAsNull) {
+		// 先从自己的 beanFactory 容器中获取 bean, 如果没有找到，再从父容器查找
 		NamedBeanHolder<T> namedBean = resolveNamedBean(requiredType, args, nonUniqueAsNull);
 		if (namedBean != null) {
 			return namedBean.getBeanInstance();
 		}
-		// 先获取当前的 parentBeanFactory，优先从 parentBeanFactory 工厂中获取 bean 对象
+		// 获取当前的 parentBeanFactory，然后从 parentBeanFactory 工厂中获取 bean 对象
 		BeanFactory parent = getParentBeanFactory();
 		if (parent instanceof DefaultListableBeanFactory) {
 			// 再次调用 resolveBean() 方法获取 bean 实例

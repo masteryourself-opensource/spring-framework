@@ -1,5 +1,7 @@
 package pers.masteryourself.tutorial.spring.framework.web.service;
 
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
@@ -14,7 +16,11 @@ import org.springframework.stereotype.Service;
 @Service
 public class DemoService {
 
+	@Autowired
+	private BeanFactory beanFactory;
+
 	public String say() {
+		System.out.println("父容器 BeanFactory.hashCode()：" + beanFactory.hashCode());
 		return "say hello";
 	}
 

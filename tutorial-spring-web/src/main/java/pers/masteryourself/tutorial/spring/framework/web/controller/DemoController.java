@@ -1,10 +1,8 @@
 package pers.masteryourself.tutorial.spring.framework.web.controller;
 
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
+import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -30,7 +28,10 @@ public class DemoController {
 	@ResponseBody
 	@RequestMapping("/say")
 	public String say() {
-		return beanFactory.getBean(DemoService.class).say();
+		DemoService demoService = beanFactory.getBean(DemoService.class);
+		System.out.println("子容器 BeanFactory.hashCode()：" + beanFactory.hashCode());
+		System.out.println("子容器 BeanFactory 的 ParentBeanFactory.hashCode()：" + ((DefaultListableBeanFactory) beanFactory).getParentBeanFactory().hashCode());
+		return demoService.say();
 	}
 
 	@RequestMapping("/")

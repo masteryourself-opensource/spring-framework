@@ -514,7 +514,8 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	/**
 	 * spring 父子容器刷新问题
 	 * 如果项目中有使用父子容器刷新，这个方法会进入两次，初始化两个完全不同的 beanFactory
-	 * 仔细观察这两个容器中的 bean 对象，Spring 父容器中包含了【springConfig】、【demoService】，而 Spring MVC 子容器包含了【springMvcConfig】、【demoController】，从而职责分离
+	 * 仔细观察这两个容器中的 bean 对象，Spring 父容器中包含了【springConfig】、【demoService】
+	 * 而 Spring MVC 子容器包含了【springMvcConfig】、【demoController】，从而职责分离
 	 * <p>
 	 * Spring 父容器中的 bean [singletonObjects]
 	 * singletonObjects = {ConcurrentHashMap@3407}  size = 17
