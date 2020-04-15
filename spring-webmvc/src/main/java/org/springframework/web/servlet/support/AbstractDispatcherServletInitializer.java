@@ -59,6 +59,7 @@ public abstract class AbstractDispatcherServletInitializer extends AbstractConte
 
 	@Override
 	public void onStartup(ServletContext servletContext) throws ServletException {
+		// 先调用父类的 onStartup() 方法
 		super.onStartup(servletContext);
 		// 创建 Spring MVC 容器
 		registerDispatcherServlet(servletContext);
@@ -83,7 +84,7 @@ public abstract class AbstractDispatcherServletInitializer extends AbstractConte
 		WebApplicationContext servletAppContext = createServletApplicationContext();
 		Assert.notNull(servletAppContext, "createServletApplicationContext() must not return null");
 
-		// 创建 DispatcherServlet
+		// 创建 DispatcherServlet，其中关联了刚刚创建出来的【WebApplicationContext】，即 Spring MVC 子容器
 		FrameworkServlet dispatcherServlet = createDispatcherServlet(servletAppContext);
 		Assert.notNull(dispatcherServlet, "createDispatcherServlet(WebApplicationContext) must not return null");
 		dispatcherServlet.setContextInitializers(getServletApplicationContextInitializers());

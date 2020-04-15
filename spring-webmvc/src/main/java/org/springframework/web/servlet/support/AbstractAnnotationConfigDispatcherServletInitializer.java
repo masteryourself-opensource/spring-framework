@@ -54,8 +54,10 @@ public abstract class AbstractAnnotationConfigDispatcherServletInitializer
 	@Override
 	@Nullable
 	protected WebApplicationContext createRootApplicationContext() {
+		// 获取 Spring 的配置类，即通过我们自定义的【MyWebAppInitializer】类获取
 		Class<?>[] configClasses = getRootConfigClasses();
 		if (!ObjectUtils.isEmpty(configClasses)) {
+			// 创建基于注解的 web 容器上下文对象，调用 register() 方法注册配置类
 			AnnotationConfigWebApplicationContext context = new AnnotationConfigWebApplicationContext();
 			context.register(configClasses);
 			return context;
@@ -74,8 +76,10 @@ public abstract class AbstractAnnotationConfigDispatcherServletInitializer
 	@Override
 	protected WebApplicationContext createServletApplicationContext() {
 		AnnotationConfigWebApplicationContext context = new AnnotationConfigWebApplicationContext();
+		// 获取 Spring MVC 配置类
 		Class<?>[] configClasses = getServletConfigClasses();
 		if (!ObjectUtils.isEmpty(configClasses)) {
+			// 创建基于注解的 web 容器上下文对象，调用 register() 方法注册配置类
 			context.register(configClasses);
 		}
 		return context;
