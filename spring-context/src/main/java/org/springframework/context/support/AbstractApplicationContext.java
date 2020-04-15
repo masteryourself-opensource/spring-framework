@@ -514,6 +514,68 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	/**
 	 * spring 父子容器刷新问题
 	 * 如果项目中有使用父子容器刷新，这个方法会进入两次，初始化两个完全不同的 beanFactory
+	 * 仔细观察这两个容器中的 bean 对象，Spring 父容器中包含了【springConfig】、【demoService】，而 Spring MVC 子容器包含了【springMvcConfig】、【demoController】，从而职责分离
+	 * <p>
+	 * Spring 父容器中的 bean [singletonObjects]
+	 * singletonObjects = {ConcurrentHashMap@3407}  size = 17
+	 * "springConfig" -> {SpringConfig@3444}
+	 * "org.springframework.context.annotation.internalConfigurationAnnotationProcessor" -> {ConfigurationClassPostProcessor@3446}
+	 * "contextAttributes" -> {Collections$UnmodifiableMap@3448}  size = 9
+	 * "org.springframework.context.event.internalEventListenerFactory" -> {DefaultEventListenerFactory@3450}
+	 * "systemEnvironment" -> {Collections$UnmodifiableMap@3452}  size = 64
+	 * "org.springframework.context.event.internalEventListenerProcessor" -> {EventListenerMethodProcessor@3454}
+	 * "lifecycleProcessor" -> {DefaultLifecycleProcessor@3490}
+	 * "demoService" -> {DemoService@3456}
+	 * "org.springframework.context.annotation.internalAutowiredAnnotationProcessor" -> {AutowiredAnnotationBeanPostProcessor@3458}
+	 * "org.springframework.context.annotation.ConfigurationClassPostProcessor.importRegistry" -> {ConfigurationClassParser$ImportStack@3460}  size = 0
+	 * "applicationEventMulticaster" -> {SimpleApplicationEventMulticaster@3334}
+	 * "environment" -> {StandardServletEnvironment@2909} "StandardServletEnvironment {activeProfiles=[], defaultProfiles=[default], propertySources=[StubPropertySource {name='servletConfigInitParams'}, ServletContextPropertySource {name='servletContextInitParams'}, JndiPropertySource {name='jndiProperties'}, MapPropertySource {name='systemProperties'}, SystemEnvironmentPropertySource {name='systemEnvironment'}]}"
+	 * "org.springframework.context.annotation.internalCommonAnnotationProcessor" -> {CommonAnnotationBeanPostProcessor@3464}
+	 * "servletContext" -> {StandardContext$NoPluggabilityServletContext@2828}
+	 * "contextParameters" -> {Collections$UnmodifiableMap@3467}  size = 0
+	 * "systemProperties" -> {Properties@3469}  size = 82
+	 * "messageSource" -> {DelegatingMessageSource@3324} "Empty MessageSource"
+	 * <p>
+	 * *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *
+	 * *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *
+	 * *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *  *
+	 * <p>
+	 * Spring MVC 子容器中的 bean
+	 * singletonObjects = {ConcurrentHashMap@4486}  size = 33
+	 * "defaultServletHandlerMapping" -> {SimpleUrlHandlerMapping@4505}
+	 * "org.springframework.context.annotation.internalConfigurationAnnotationProcessor" -> {ConfigurationClassPostProcessor@4941}
+	 * "org.springframework.web.servlet.config.annotation.DelegatingWebMvcConfiguration" -> {DelegatingWebMvcConfiguration$$EnhancerBySpringCGLIB$$2e2e4cbb@4942}
+	 * "org.springframework.context.event.internalEventListenerFactory" -> {DefaultEventListenerFactory@4943}
+	 * "mvcUrlPathHelper" -> {UrlPathHelper@4944}
+	 * "springMvcConfig" -> {SpringMvcConfig@4945}
+	 * "systemEnvironment" -> {Collections$UnmodifiableMap@4946}  size = 64
+	 * "org.springframework.context.event.internalEventListenerProcessor" -> {EventListenerMethodProcessor@4947}
+	 * "servletConfig" -> {StandardWrapperFacade@3387}
+	 * "requestMappingHandlerMapping" -> {RequestMappingHandlerMapping@4503}
+	 * "lifecycleProcessor" -> {DefaultLifecycleProcessor@4421}
+	 * "requestMappingHandlerAdapter" -> {RequestMappingHandlerAdapter@4507}
+	 * "org.springframework.context.annotation.internalAutowiredAnnotationProcessor" -> {AutowiredAnnotationBeanPostProcessor@4578}
+	 * "org.springframework.context.annotation.ConfigurationClassPostProcessor.importRegistry" -> {ConfigurationClassParser$ImportStack@4948}  size = 0
+	 * "applicationEventMulticaster" -> {SimpleApplicationEventMulticaster@3779}
+	 * "mvcContentNegotiationManager" -> {ContentNegotiationManager@4949}
+	 * "environment" -> {StandardServletEnvironment@3462} "StandardServletEnvironment {activeProfiles=[], defaultProfiles=[default], propertySources=[ServletConfigPropertySource {name='servletConfigInitParams'}, ServletContextPropertySource {name='servletContextInitParams'}, JndiPropertySource {name='jndiProperties'}, MapPropertySource {name='systemProperties'}, SystemEnvironmentPropertySource {name='systemEnvironment'}]}"
+	 * "httpRequestHandlerAdapter" -> {HttpRequestHandlerAdapter@4508}
+	 * "beanNameHandlerMapping" -> {BeanNameUrlHandlerMapping@4504}
+	 * "org.springframework.context.annotation.internalCommonAnnotationProcessor" -> {CommonAnnotationBeanPostProcessor@4577}
+	 * "resourceHandlerMapping" -> {NullBean@4950} "null"
+	 * "simpleControllerHandlerAdapter" -> {SimpleControllerHandlerAdapter@4509}
+	 * "demoController" -> {DemoController@4951}
+	 * "mvcValidator" -> {WebMvcConfigurationSupport$NoOpValidator@4952}
+	 * "mvcResourceUrlProvider" -> {ResourceUrlProvider@4751}
+	 * "viewControllerHandlerMapping" -> {NullBean@4953} "null"
+	 * "systemProperties" -> {Properties@4954}  size = 82
+	 * "mvcConversionService" -> {DefaultFormattingConversionService@4955} "ConversionService converters =\n\t@org.springframework.format.annotation.DateTimeFormat java.lang.Long -> java.lang.String: org.springframework.format.datetime.DateTimeFormatAnnotationFormatterFactory@1ead6442,@org.springframework.format.annotation.NumberFormat java.lang.Long -> java.lang.String: org.springframework.format.number.NumberFormatAnnotationFormatterFactory@4e7fd921\n\t@org.springframework.format.annotation.DateTimeFormat java.time.LocalDate -> java.lang.String: org.springframework.format.datetime.standard.Jsr310DateTimeFormatAnnotationFormatterFactory@58b3b940,java.time.LocalDate -> java.lang.String : org.springframework.format.datetime.standard.TemporalAccessorPrinter@52d95c85\n\t@org.springframework.format.annotation.DateTimeFormat java.time.LocalDateTime -> java.lang.String: org.springframework.format.datetime.standard.Jsr310DateTimeFormatAnnotationFormatterFactory@58b3b940,java.time.LocalDateTime -> java.lang.String : org.springframework.format.datetime.standard.TemporalAcces"
+	 * "mvcPathMatcher" -> {AntPathMatcher@4956}
+	 * "handlerExceptionResolver" -> {HandlerExceptionResolverComposite@4511}
+	 * "mvcViewResolver" -> {ViewResolverComposite@4513}
+	 * "mvcUriComponentsContributor" -> {CompositeUriComponentsContributor@4957}
+	 * "messageSource" -> {DelegatingMessageSource@3771} "Empty MessageSource"
+	 *
 	 * @throws BeansException
 	 * @throws IllegalStateException
 	 */

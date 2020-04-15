@@ -1,6 +1,10 @@
 package pers.masteryourself.tutorial.spring.framework.web.controller;
 
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -21,12 +25,12 @@ import java.util.Map;
 public class DemoController {
 
 	@Autowired
-	private DemoService demoService;
+	private BeanFactory beanFactory;
 
 	@ResponseBody
 	@RequestMapping("/say")
 	public String say() {
-		return demoService.say();
+		return beanFactory.getBean(DemoService.class).say();
 	}
 
 	@RequestMapping("/")
