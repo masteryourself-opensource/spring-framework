@@ -1,10 +1,13 @@
 package pers.masteryourself.tutorial.spring.framework.aop;
 
+import org.springframework.aop.MethodBeforeAdvice;
+import org.springframework.aop.framework.Advised;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import pers.masteryourself.tutorial.spring.framework.aop.config.SpringConfig;
 import pers.masteryourself.tutorial.spring.framework.aop.service.PersonService;
 import pers.masteryourself.tutorial.spring.framework.aop.service.impl.PersonServiceImpl;
 
+import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
 /**
@@ -32,6 +35,16 @@ public class AopApplication {
 		// false
 		// java 是单继承的，代理类并不是 PersonServiceImpl 的子类
 		System.out.println(personService instanceof PersonServiceImpl);
+		System.out.println(personService);
+		System.out.println("*******************************我是分隔符*******************************");
+		((Advised) personService).addAdvice(new MethodBeforeAdvice() {
+			@Override
+			public void before(Method method, Object[] args, Object target) throws Throwable {
+				System.out.println("插件生效");
+			}
+		});
+		System.out.println(personService.query("张三"));
+		System.out.println(personService);
 	}
 
 }
