@@ -36,3 +36,5 @@ include 'tutorial-spring-aop'
 include 'tutorial-spring-start'
 include 'tutorial-spring-configurationclasspostprocessor'
 include 'tutorial-spring-web'
+include 'tutorial-spring-cycle'
+
