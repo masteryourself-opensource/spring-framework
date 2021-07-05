@@ -70,22 +70,37 @@ import org.springframework.util.StringUtils;
  */
 public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements SingletonBeanRegistry {
 
-	/** Cache of singleton objects: bean name to bean instance. */
-	// 保存所有单实例的 bean，key 为 beanName,value 是 bean 的实例
+	/**
+	 * Cache of singleton objects: bean name to bean instance.
+	 * 一级缓存, 保存所有单实例的 bean，key 为 beanName,value 是 bean 的实例对象(非构造对象, 即意味着它可能是代理类)
+	 * Spring 容器的核心实现
+	 **/
 	private final Map<String, Object> singletonObjects = new ConcurrentHashMap<>(256);
 
-	/** Cache of singleton factories: bean name to ObjectFactory. */
-	// 存放 bean，主要是为了解决循环依赖
+	/**
+	 * Cache of singleton factories: bean name to ObjectFactory.
+	 * 三级缓存, 存放 ObjectFactory 工厂, 不管在什么情况下创建 bean 时, 都会在这个 map 里存一个, 但只有特定情况下会用到
+	 * 用于解决循环依赖 和 AOP 代理问题
+	 */
 	private final Map<String, ObjectFactory<?>> singletonFactories = new HashMap<>(16);
 
-	/** Cache of early singleton objects: bean name to bean instance. */
-	// 存放原始的 bean 对象用于解决循环依赖，存到里面的对象还没有被填充属性
+	/**
+	 * Cache of early singleton objects: bean name to bean instance.
+	 * 二级缓存, 存放提前暴露的 bean 实例对象, 其还未被赋值, 即未进行 {@link org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory#populateBean(java.lang.String, org.springframework.beans.factory.support.RootBeanDefinition, org.springframework.beans.BeanWrapper)}
+	 * 用于解决循环依赖
+	 */
 	private final Map<String, Object> earlySingletonObjects = new HashMap<>(16);
 
-	/** Set of registered singletons, containing the bean names in registration order. */
+	/**
+	 * Set of registered singletons, containing the bean names in registration order.
+	 * 已经构造成功的单例对象名称集合
+	 */
 	private final Set<String> registeredSingletons = new LinkedHashSet<>(256);
 
-	/** Names of beans that are currently in creation. */
+	/**
+	 * Names of beans that are currently in creation.
+	 * 正在创建的单例对象名称集合
+	 */
 	private final Set<String> singletonsCurrentlyInCreation =
 			Collections.newSetFromMap(new ConcurrentHashMap<>(16));
 
@@ -158,11 +173,11 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 		Assert.notNull(singletonFactory, "Singleton factory must not be null");
 		synchronized (this.singletonObjects) {
 			if (!this.singletonObjects.containsKey(beanName)) {
-				// 向 singletonFactories 中存一份
+				// 向 【singletonFactories】 中存一份
 				this.singletonFactories.put(beanName, singletonFactory);
 				// 从 【earlySingletonObjects】 移除对象
 				this.earlySingletonObjects.remove(beanName);
-				// 向 【registeredSingletons】 存一份，这个对象是个 set 集合，只保存 beanName
+				// 表示已经构造成功了
 				this.registeredSingletons.add(beanName);
 			}
 		}
@@ -190,6 +205,7 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 		// 判断【singletonsCurrentlyInCreation】集合中是否包含 beanName，如果包含则表示正在创建
 		if (singletonObject == null && isSingletonCurrentlyInCreation(beanName)) {
 			synchronized (this.singletonObjects) {
+				// 如果发生了循坏依赖, 那么这里就会从这个 map 里获取到值
 				singletonObject = this.earlySingletonObjects.get(beanName);
 				if (singletonObject == null && allowEarlyReference) {
 					ObjectFactory<?> singletonFactory = this.singletonFactories.get(beanName);
@@ -225,6 +241,7 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 				if (logger.isDebugEnabled()) {
 					logger.debug("Creating shared instance of singleton bean '" + beanName + "'");
 				}
+				// 标记 bean 正在创建中
 				beforeSingletonCreation(beanName);
 				boolean newSingleton = false;
 				boolean recordSuppressedExceptions = (this.suppressedExceptions == null);
@@ -256,10 +273,11 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 					if (recordSuppressedExceptions) {
 						this.suppressedExceptions = null;
 					}
+					// 已经创建完成后, 会从【singletonsCurrentlyInCreation】里删除
 					afterSingletonCreation(beanName);
 				}
 				if (newSingleton) {
-					// 如果 bean 已经创建出来了，就添加到【singletonObjects】集合中
+					// 如果 bean 已经创建出来了，就添加到【singletonObjects】一级缓存中, 同时删除二级缓存【earlySingletonObjects】和三级缓存【singletonFactories】
 					addSingleton(beanName, singletonObject);
 				}
 			}

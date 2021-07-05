@@ -589,14 +589,14 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 				logger.trace("Eagerly caching bean '" + beanName +
 						"' to allow for resolving potential circular references");
 			}
-			// 更改 bean 的一些标记信息
+			// 添加到三级缓存【singletonFactories】中, 同时从二级缓存删除【earlySingletonObjects】
 			addSingletonFactory(beanName, () -> getEarlyBeanReference(beanName, mbd, bean));
 		}
 
 		// Initialize the bean instance.
 		Object exposedObject = bean;
 		try {
-			// 给属性赋值
+			// 给属性赋值, 这里可能会产生循坏依赖
 			populateBean(beanName, mbd, instanceWrapper);
 			// 执行 bean 的初始化
 			exposedObject = initializeBean(beanName, exposedObject, mbd);
@@ -612,12 +612,14 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		}
 
 		if (earlySingletonExposure) {
-			// 再从容器中获取赋值，因为上面的步骤已经创建好了 bean
+			// 判断是否处于循坏依赖(非 AOP), 这里的 allowEarlyReference=false
 			Object earlySingletonReference = getSingleton(beanName, false);
 			if (earlySingletonReference != null) {
+				// 这里会校验从二级缓存中获取到的 bean 有没有发生改变, 如果发生改变了, 会进入 else 分支
 				if (exposedObject == bean) {
 					exposedObject = earlySingletonReference;
 				}
+				// 这里如果发生了循坏依赖, 会直接抛出异常, 防止 bean 在初始化过程中因为循坏依赖的问题发生了变化(即被代理)
 				else if (!this.allowRawInjectionDespiteWrapping && hasDependentBean(beanName)) {
 					String[] dependentBeans = getDependentBeans(beanName);
 					Set<String> actualDependentBeans = new LinkedHashSet<>(dependentBeans.length);

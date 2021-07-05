@@ -3,8 +3,6 @@ package pers.masteryourself.tutorial.spring.framework.cycle;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import pers.masteryourself.tutorial.spring.framework.cycle.config.SpringConfig;
 
-import java.util.Arrays;
-
 /**
  * <p>description : CycleApplication
  *

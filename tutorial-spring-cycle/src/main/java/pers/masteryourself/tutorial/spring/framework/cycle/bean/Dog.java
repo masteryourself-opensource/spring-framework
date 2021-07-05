@@ -16,7 +16,15 @@ import javax.annotation.Resource;
 @Component
 public class Dog {
 
-	@Resource
 	private People host;
+
+	@Resource
+	public void setHost(People host) {
+		this.host = host;
+	}
+
+	public Dog() {
+		System.out.println("dog 构造");
+	}
 
 }

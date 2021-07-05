@@ -16,7 +16,14 @@ import javax.annotation.Resource;
 @Component
 public class People {
 
-	@Resource
 	private Dog pet;
 
+	@Resource
+	public void setPet(Dog pet) {
+		this.pet = pet;
+	}
+
+	public People() {
+		System.out.println("people 构造");
+	}
 }
