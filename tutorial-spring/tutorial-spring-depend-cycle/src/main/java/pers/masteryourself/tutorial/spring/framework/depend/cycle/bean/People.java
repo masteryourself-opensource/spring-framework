@@ -1,11 +1,11 @@
-package pers.masteryourself.tutorial.spring.framework.cycle.bean;
+package pers.masteryourself.tutorial.spring.framework.depend.cycle.bean;
 
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 
 /**
- * <p>description : Dog
+ * <p>description : People
  *
  * <p>blog : https://blog.csdn.net/masteryourself
  *
@@ -14,17 +14,16 @@ import javax.annotation.Resource;
  * @date : 2021/6/2 15:17
  */
 @Component
-public class Dog {
+public class People {
 
-	private People host;
+	private Dog pet;
 
 	@Resource
-	public void setHost(People host) {
-		this.host = host;
+	public void setPet(Dog pet) {
+		this.pet = pet;
 	}
 
-	public Dog() {
-		System.out.println("dog 构造");
+	public People() {
+		System.out.println("people 构造");
 	}
-
 }

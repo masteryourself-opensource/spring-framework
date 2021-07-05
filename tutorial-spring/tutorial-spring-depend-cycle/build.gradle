@@ -11,5 +11,4 @@ repositories {
 
 dependencies {
     compile(project(":spring-context"))
-    compile "org.springframework:spring-aspects:$version"
 }

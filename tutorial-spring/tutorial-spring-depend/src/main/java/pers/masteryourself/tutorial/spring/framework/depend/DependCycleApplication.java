@@ -1,7 +1,7 @@
-package pers.masteryourself.tutorial.spring.framework.cycle;
+package pers.masteryourself.tutorial.spring.framework.depend;
 
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import pers.masteryourself.tutorial.spring.framework.cycle.config.SpringConfig;
+import pers.masteryourself.tutorial.spring.framework.depend.config.SpringConfig;
 
 /**
  * <p>description : DependCycleApplication

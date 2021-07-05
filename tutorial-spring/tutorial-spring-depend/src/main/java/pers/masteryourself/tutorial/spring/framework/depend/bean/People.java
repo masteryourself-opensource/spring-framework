@@ -1,4 +1,4 @@
-package pers.masteryourself.tutorial.spring.framework.cycle.bean;
+package pers.masteryourself.tutorial.spring.framework.depend.bean;
 
 import org.springframework.stereotype.Component;
 
@@ -15,13 +15,6 @@ import javax.annotation.Resource;
  */
 @Component
 public class People {
-
-	private Dog pet;
-
-	@Resource
-	public void setPet(Dog pet) {
-		this.pet = pet;
-	}
 
 	public People() {
 		System.out.println("people 构造");

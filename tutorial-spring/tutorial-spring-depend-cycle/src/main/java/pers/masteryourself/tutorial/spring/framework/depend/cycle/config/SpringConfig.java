@@ -1,4 +1,4 @@
-package pers.masteryourself.tutorial.spring.framework.cycle.config;
+package pers.masteryourself.tutorial.spring.framework.depend.cycle.config;
 
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Configuration;
  * @date : 2020/4/11 0:20
  */
 @Configuration
-@ComponentScan(basePackages = "pers.masteryourself.tutorial.spring.framework.cycle.bean")
+@ComponentScan(basePackages = "pers.masteryourself.tutorial.spring.framework.depend.cycle.config")
 public class SpringConfig {
 
 }
