@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Configuration;
  * @date : 2020/4/11 0:20
  */
 @Configuration
-@ComponentScan(basePackages = "pers.masteryourself.tutorial.spring.framework.depend.config")
+@ComponentScan(basePackages = "pers.masteryourself.tutorial.spring.framework.depend")
 public class SpringConfig {
 
 }
