@@ -173,9 +173,9 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 		Assert.notNull(singletonFactory, "Singleton factory must not be null");
 		synchronized (this.singletonObjects) {
 			if (!this.singletonObjects.containsKey(beanName)) {
-				// 向 【singletonFactories】 中存一份
+				// 向三级缓存 【singletonFactories】 中存一份
 				this.singletonFactories.put(beanName, singletonFactory);
-				// 从 【earlySingletonObjects】 移除对象
+				// 从二级缓存【earlySingletonObjects】 移除对象
 				this.earlySingletonObjects.remove(beanName);
 				// 表示已经构造成功了
 				this.registeredSingletons.add(beanName);
@@ -205,13 +205,16 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 		// 判断【singletonsCurrentlyInCreation】集合中是否包含 beanName，如果包含则表示正在创建
 		if (singletonObject == null && isSingletonCurrentlyInCreation(beanName)) {
 			synchronized (this.singletonObjects) {
-				// 如果发生了循坏依赖, 那么这里就会从这个 map 里获取到值
+				// 如果allowEarlyReference = true, 发生了循坏依赖, 那么这里就会从这个 map 里获取到值
 				singletonObject = this.earlySingletonObjects.get(beanName);
 				if (singletonObject == null && allowEarlyReference) {
+					// 使用三级缓存解决循环依赖问题
 					ObjectFactory<?> singletonFactory = this.singletonFactories.get(beanName);
 					if (singletonFactory != null) {
 						singletonObject = singletonFactory.getObject();
+						// 添加到【earlySingletonObjects】二级缓存
 						this.earlySingletonObjects.put(beanName, singletonObject);
+						// 从【singletonFactories】三级缓存移除
 						this.singletonFactories.remove(beanName);
 					}
 				}
@@ -231,6 +234,7 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 	public Object getSingleton(String beanName, ObjectFactory<?> singletonFactory) {
 		Assert.notNull(beanName, "Bean name must not be null");
 		synchronized (this.singletonObjects) {
+			// 先从一级缓存【singletonObjects】中获取 bean 对象，第一次肯定获取不到
 			Object singletonObject = this.singletonObjects.get(beanName);
 			if (singletonObject == null) {
 				if (this.singletonsCurrentlyInDestruction) {
