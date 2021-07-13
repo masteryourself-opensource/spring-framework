@@ -598,7 +598,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		try {
 			// 给属性赋值, 这里可能会产生循坏依赖
 			populateBean(beanName, mbd, instanceWrapper);
-			// 执行 bean 的初始化
+			// 执行 bean 的初始化, 这里可能会返回一个代理对象, @Async 注解作用
 			exposedObject = initializeBean(beanName, exposedObject, mbd);
 		}
 		catch (Throwable ex) {
@@ -612,10 +612,11 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		}
 
 		if (earlySingletonExposure) {
-			// 判断是否处于循坏依赖(非 AOP), 这里的 allowEarlyReference=false
+			// 从容器中再次获取一次 bean, 这里返回的是可能是从二级缓存【earlySingletonObjects】中获取的对象, 即早期暴露 bean 对象的引用
 			Object earlySingletonReference = getSingleton(beanName, false);
+			// 如果 earlySingletonReference 为 null, 表示不存在循坏依赖, 不用进行下面步骤
 			if (earlySingletonReference != null) {
-				// 这里会校验从二级缓存中获取到的 bean 有没有发生改变, 如果发生改变了, 会进入 else 分支
+				// 如果存在, 说明包含了循坏依赖, 需要校验原始对象和循坏依赖后的对象有没有发生变化, 发生变化了就抛出循坏依赖异常
 				if (exposedObject == bean) {
 					exposedObject = earlySingletonReference;
 				}
