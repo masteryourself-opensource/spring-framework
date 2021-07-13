@@ -31,12 +31,11 @@ rootProject.children.each {project ->
 }
 
 // 源码解析相关项目
-include 'tutorial-spring'
 include 'tutorial-spring:tutorial-spring-start'
 include 'tutorial-spring:tutorial-spring-configurationclasspostprocessor'
-include 'tutorial-spring:tutorial-spring-depend'
-include 'tutorial-spring:tutorial-spring-depend-cycle'
-include 'tutorial-spring:tutorial-spring-depend-aop-cycle'
+include 'tutorial-spring:tutorial-spring-depend:tutorial-spring-depend-simple'
+include 'tutorial-spring:tutorial-spring-depend:tutorial-spring-depend-cycle'
+include 'tutorial-spring:tutorial-spring-depend:tutorial-spring-depend-aop-cycle'
 include 'tutorial-spring:tutorial-spring-aop'
 include 'tutorial-spring:tutorial-spring-tx'
 include 'tutorial-spring:tutorial-spring-web'

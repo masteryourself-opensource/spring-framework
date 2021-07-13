@@ -210,6 +210,7 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 					// 使用三级缓存解决循环依赖问题
 					ObjectFactory<?> singletonFactory = this.singletonFactories.get(beanName);
 					if (singletonFactory != null) {
+						// 这里返回的刚刚创建出来的对象, 当然也有可能被代理过后的对象
 						singletonObject = singletonFactory.getObject();
 						// 添加到【earlySingletonObjects】二级缓存
 						this.earlySingletonObjects.put(beanName, singletonObject);

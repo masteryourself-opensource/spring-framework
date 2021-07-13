@@ -954,10 +954,12 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 	 */
 	protected Object getEarlyBeanReference(String beanName, RootBeanDefinition mbd, Object bean) {
 		Object exposedObject = bean;
+		// 在这里由于可能会涉及 AOP 代理问题, 所以会执行 BeanPostProcessors
 		if (!mbd.isSynthetic() && hasInstantiationAwareBeanPostProcessors()) {
 			for (BeanPostProcessor bp : getBeanPostProcessors()) {
 				if (bp instanceof SmartInstantiationAwareBeanPostProcessor) {
 					SmartInstantiationAwareBeanPostProcessor ibp = (SmartInstantiationAwareBeanPostProcessor) bp;
+					// 如果在这里【AbstractAutoProxyCreator】判断需要代理，则由它会返回一个 aop 代理对象
 					exposedObject = ibp.getEarlyBeanReference(exposedObject, beanName);
 				}
 			}

@@ -331,6 +331,9 @@ public abstract class AbstractAutoProxyCreator extends ProxyProcessorSupport
 	 * @param beanName the name of the bean
 	 * @param cacheKey the cache key for metadata access
 	 * @return a proxy wrapping the bean, or the raw bean instance as-is
+	 * 这个方法有两处调用的地方:
+	 * {@link org.springframework.aop.framework.autoproxy.AbstractAutoProxyCreator#getEarlyBeanReference(java.lang.Object, java.lang.String)} 是在循环依赖中处理的
+	 * {@link AbstractAutoProxyCreator#postProcessAfterInitialization(java.lang.Object, java.lang.String)} 正常 bean 的生命周期在执行 beanPostProcessor 会判断是否需要使用 AOP 增强
 	 */
 	protected Object wrapIfNecessary(Object bean, String beanName, Object cacheKey) {
 		if (StringUtils.hasLength(beanName) && this.targetSourcedBeans.contains(beanName)) {
